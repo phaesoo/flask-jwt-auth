@@ -1,11 +1,11 @@
-from oms_backend.api.restplus import api
+from app.api.restplus import api
 
 from flask import Flask, Blueprint
-from flask_cors import CORS
 import logging
 
-from db.database import init_db, db_sessions
-from utils.log import init_logger
+from app.api.users.endpoints import ns as ns_users
+from app.db.database import init_db, db_sessions
+from app.utils.log import init_logger
 
 init_logger(__name__)
 app = Flask(__name__)
@@ -18,15 +18,14 @@ def shoutdown_session(exception=None):
         db_sessions[session].remove()
 
 
-def init_api():
-    pass
+def init_api(api):
+    api.add_namespace(ns_users)
 
 
 def initialize_app(flask_app):
     blueprint = Blueprint("api", __name__, url_prefix="/api")
-    CORS(blueprint)
     api.init_app(blueprint)
-    init_api()
+    init_api(api)
     flask_app.register_blueprint(blueprint)
 
 
