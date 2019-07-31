@@ -1,21 +1,28 @@
 from flask_restplus import Resource, reqparse, fields
 
 import logging
+from datetime import datetime
 
 from app.api.restplus import api
-
+from app.decorators.auth import jwt_authenticate
 from app.models.auth import AuthUser
-from datetime import datetime
 from app.db.database import get_session
+
 
 logger = logging.getLogger(__name__)
 
 ns = api.namespace("users", description="Endpoints for user")
 
 
+parser = reqparse.RequestParser()
+parser.add_argument("Authorization", type=str, location="headers", help="JWT", required=True)
+
 @ns.route("/")
 class Root(Resource):
+    @jwt_authenticate
     def get(self):
+        parse_data = parser.parse_args()
+
         db = get_session("auth")
         data= db.query(AuthUser).one()
         print data.username
