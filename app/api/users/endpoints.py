@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 
 from app.api.restplus import api
-from app.decorators.auth import jwt_authenticate
+from app.decorators.auth import jwt_authenticate, jwt_admin_authenticate
 from app.models.auth import AuthUser
 from app.db.database import get_session
 
@@ -19,14 +19,13 @@ parser.add_argument("Authorization", type=str, location="headers", help="JWT", r
 
 @ns.route("/")
 class Root(Resource):
-    @jwt_authenticate
+    @jwt_admin_authenticate
     def get(self):
-        parse_data = parser.parse_args()
+        session = get_session("auth")
+        data= session.query(AuthUser).all()
 
-        db = get_session("auth")
-        data= db.query(AuthUser).one()
-        print data.username
-        
+        print data
+
     def post(self):
         user = AuthUser(
             id=0,
