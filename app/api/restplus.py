@@ -9,6 +9,7 @@ api = Api(version="1.0.0", title="Flask-JWT-Auth Example")
 def default_error_handler(e):
     message = "An unhandled exception occurred."
     logger.exception(message)
+    print ("=== ERROR: {}".format(e))
 
     if not app.debug:
         return {"message": message}, 500

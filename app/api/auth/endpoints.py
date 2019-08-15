@@ -30,8 +30,11 @@ class Login(Resource):
         # username and password check
         session = get_session("auth")
         auth_user = session.query(AuthUser).filter_by(username=parse_data.username).first()
+        print "author_user", auth_user
         if auth_user is None:
             return resp.error("Invalid username in token: {}".format(parse_data.username))
+        print auth_user.password
+        print encrypt_sha(parse_data.password)
         if auth_user.password != encrypt_sha(parse_data.password):
             return resp.error("Invalid password")
 
@@ -44,7 +47,7 @@ class Login(Resource):
             session.rollback()
             return resp.error("Error while update db", status=status.ERROR_SERVER)
 
-        token = encrypt_jwt(aud=parse_data.username)
+        token = encrypt_jwt(parse_data.username)
         return resp.success({
             "access_token": token
         })

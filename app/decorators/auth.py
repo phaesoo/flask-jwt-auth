@@ -1,7 +1,7 @@
 from flask import Flask, request
 from functools import wraps
 import jwt
-from datetime import datetime
+import time
 
 from app.define import status
 from app.response import response as resp
@@ -30,7 +30,7 @@ def jwt_authenticate(f):
         if auth_user is None:
             return resp.error("Invalid username in token: {}".format(username))
         
-        if decoded_token.get("exp") < int(datetime.now().timestamp()):
+        if decoded_token.get("exp") < time.time():
             return resp.error("Access token has been expired", status=status.ERROR_UNAUTHORIZED)
 
         return f(*args, **kwargs)
@@ -50,12 +50,12 @@ def jwt_admin_authenticate(f):
             return resp.error("Invalid token given")
 
         session = get_session("auth")
-        username = decoded_token.get("aud")
+        username = decoded_token.get("username")
         auth_user = session.query(AuthUser).filter_by(username=username).first()
         if auth_user is None:
             return resp.error("Invalid username in token: {}".format(username))
         
-        if decoded_token.get("exp") < int(datetime.now().timestamp()):
+        if decoded_token.get("exp") < time.time():
             return resp.error("Access token has been expired", status=status.ERROR_UNAUTHORIZED)
 
         if not auth_user.is_superuser:

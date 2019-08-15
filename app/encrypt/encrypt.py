@@ -2,26 +2,26 @@ from flask import current_app as app
 
 import jwt
 from hashlib import sha256
+import time
 from datetime import datetime
 from app.utils.config_util import get_config
 
 
-# aud: audience
 # iat: issued at
 # exp: expiration time
 
 
 def __validate_jwt(data):
-    for key in ["aud", "iat", "exp"]:
+    for key in ["username", "iat", "exp"]:
         if key not in data:
             raise KeyError
 
 
-def encrypt_jwt(aud):
-    iat = int(datetime.now().timestamp())
+def encrypt_jwt(username):
+    iat = time.time()
     exp = iat + get_config("JWT_EXP_PERIOD")
     return jwt.encode({
-        "aud": aud, 
+        "username": username, 
         "iat": iat,
         "exp": exp
     }, get_config("JWT_SECRET_KEY"), algorithm=get_config("JWT_ALGO"))
