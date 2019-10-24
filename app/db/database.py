@@ -1,3 +1,4 @@
+from flask import current_app
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -7,8 +8,9 @@ db_engines = dict()
 
 
 def init_db():
+    database =  current_app.config.get("DATABASE")
     db_name = "auth"
-    engine = create_engine("sqlite:///auth.db", echo=True)
+    engine = create_engine("sqlite:///{}".format(database), echo=False)
     db_session = scoped_session(
         sessionmaker(autocommit=False, autoflush=False, bind=engine)
         )

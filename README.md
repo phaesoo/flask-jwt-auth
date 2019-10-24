@@ -1,2 +1,2 @@
-# flask-jwt-auth-example
-Flask REST API jwt auth example project
+# flask-jwt-auth
+Flask REST API jwt auth
