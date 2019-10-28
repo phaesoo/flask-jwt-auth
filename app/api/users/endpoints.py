@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 
 from app.api.restplus import api
-from app.decorators.auth import jwt_authenticate, jwt_admin_authenticate
+from app.decorators.auth import jwt_authenticate
 from app.models.auth import AuthUser
 from app.db.database import get_session
 from app.encrypt.encrypt import encrypt_sha
@@ -20,10 +20,10 @@ parser = reqparse.RequestParser()
 parser.add_argument("Authorization", type=str, location="headers", help="JWT", required=True)
 
 
-@ns.route("/")
+@ns.route("")
 class Root(Resource):
-    @jwt_admin_authenticate
-    def get(self):
+    @jwt_authenticate(is_superuser=True)
+    def get(self, **kwargs):
         session = get_session("auth")
         obj_list= session.query(AuthUser).all()
 

@@ -25,7 +25,7 @@ def client():
     os.unlink(app.config['DATABASE'])
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def user():
     session = get_session("auth")
     user = AuthUser(
