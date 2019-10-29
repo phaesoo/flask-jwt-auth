@@ -5,6 +5,7 @@ from app.define import status
 def test_login(client, user):
     # 1. test login
     # 2. check access_token
+    
     resp = client.post('/api/auth/login', json={
         "username": "administrator",
         "password": "test"
@@ -19,6 +20,7 @@ def test_me(client, user):
     # 1. test login
     # 2. test me (sucess)
     # 3. test me without token (error unauthorized)
+
     resp = client.post('/api/auth/login', json={
         "username": "administrator",
         "password": "test"

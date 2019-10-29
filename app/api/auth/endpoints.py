@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 
 ns = api.namespace("auth", description="Endpoints for user auth")
 
-
 parser = reqparse.RequestParser()
 parser.add_argument("username", required=True)
 parser.add_argument("password", required=True)
+
 
 
 @ns.route("/login")
