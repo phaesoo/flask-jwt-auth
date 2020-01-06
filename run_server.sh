@@ -1,7 +1,7 @@
 #!/bin/bash
 
 HOST=0.0.0.0
-PORT=5000
+PORT=8000
 
 export FLASK_APP=app
 export FLASK_ENV=debug

@@ -1,6 +1,9 @@
 import re
-from string import ascii_letters, digits, punctuation, lowercase
-
+from string import ascii_letters, digits, punctuation
+try:
+    from string import lowercase
+except ImportError:
+    from string import ascii_lowercase as lowercase
 
 __valid_username_chars = lowercase + digits
 __valid_password_chars = ascii_letters + digits + punctuation
