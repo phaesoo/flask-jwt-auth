@@ -2,6 +2,7 @@
 Flask REST API example with JWT authentication
 
 ## Todo list
-- [ ] Endpoint implementation: Delete
+- [x] Endpoint implementation: Delete
+- [ ] Add test code: Delete
 - [ ] Separate configuration part
 - [ ] API documentation: Swagger

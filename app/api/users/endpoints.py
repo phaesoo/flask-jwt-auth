@@ -71,20 +71,25 @@ class Root(Resource):
         if session.query(AuthUser).filter_by(username=parsed.username).count():
             return resp.error("Already existed username")
 
-        user = AuthUser(
-            username=parsed.username,
-            password=encrypt_sha(parsed.password),
-            last_login=datetime.now(),
-            is_superuser=False,
-            first_name=parsed.first_name,
-            last_name=parsed.last_name,
-            email=parsed.email,
-            is_staff=False,
-            is_active=True,
-            date_joined=datetime.now()
-        )
-        session.add(user)
-        session.commit()
+        try:
+            user = AuthUser(
+                username=parsed.username,
+                password=encrypt_sha(parsed.password),
+                last_login=datetime.now(),
+                is_superuser=False,
+                first_name=parsed.first_name,
+                last_name=parsed.last_name,
+                email=parsed.email,
+                is_staff=False,
+                is_active=True,
+                date_joined=datetime.now()
+            )
+            session.add(user)
+        except:
+            session.rollback()
+            return resp.error("Error while update user info.")
+        else:
+            session.commit()
 
         auth_user = session.query(AuthUser).filter_by(username=parsed.username).first()
         return resp.success({
@@ -139,19 +144,39 @@ class Username(Resource):
 
         try:
             session.query(AuthUser).update(update_dict)
-            session.commit()
-            auth_user = session.query(AuthUser).filter_by(username=username).first()
-            return resp.success({
-                "id": auth_user.id,
-                "username": auth_user.username,
-                "first_name": auth_user.first_name,
-                "last_name": auth_user.last_name,
-                "email": auth_user.email,
-            })
         except:
             session.rollback()
-            return resp.error("Error while update DB")
+            return resp.error("Error while update user info.")
+        else:
+            session.commit()
+
+        auth_user = session.query(AuthUser).filter_by(username=username).first()
+        return resp.success({
+            "id": auth_user.id,
+            "username": auth_user.username,
+            "first_name": auth_user.first_name,
+            "last_name": auth_user.last_name,
+            "email": auth_user.email,
+        })
 
     @jwt_authenticate(is_superuser=True)
     def delete(self, username, **kwargs):
-        logger.info("delete user info: {}".format(username))
+        session = get_session("auth")
+
+        auth_user = session.query(AuthUser).filter_by(username=username).first()
+
+        try:
+            session.query(AuthUser).filter_by(username=username).delete()
+        except:
+            session.rollback()
+            return resp.error("Error while update user info.")
+        else:
+            session.commit()
+
+        return resp.success({
+            "id": auth_user.id,
+            "username": auth_user.username,
+            "first_name": auth_user.first_name,
+            "last_name": auth_user.last_name,
+            "email": auth_user.email,
+        })

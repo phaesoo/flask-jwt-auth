@@ -11,14 +11,14 @@ def test_users(client, user):
         "password": "test"
     })
 
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
     access_token = json.loads(resp.data)["data"]["access_token"]
     assert len(access_token)
 
     resp = client.get('/api/users', headers={
         "Authorization": access_token,
     })
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
 
 
 def test_create_user(client):
@@ -37,7 +37,7 @@ def test_create_user(client):
         "last_name": "Name",
         "email": "test@email.com"
     })
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
 
     resp = client.post('/api/users', json={
         "username": test_username,
@@ -58,7 +58,7 @@ def test_create_user(client):
     resp = client.get('/api/users/{}'.format(test_username), headers={
         "Authorization": access_token,
     })
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
 
 
 def test_get_user(client, user):
@@ -70,14 +70,14 @@ def test_get_user(client, user):
         "password": "test"
     })
 
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
     access_token = json.loads(resp.data)["data"]["access_token"]
     assert len(access_token)
 
     resp = client.get('/api/users/administrator', headers={
         "Authorization": access_token,
     })
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
 
 
 def test_update_user(client, user):
@@ -92,7 +92,7 @@ def test_update_user(client, user):
         "password": test_password
     })
 
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
     access_token = json.loads(resp.data)["data"]["access_token"]
     assert len(access_token)
 
@@ -106,4 +106,4 @@ def test_update_user(client, user):
         "last_name": "new",
         "email": "asdkaasd@temp.com"
     })
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK

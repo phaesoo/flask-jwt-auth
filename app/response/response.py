@@ -2,9 +2,9 @@
 # https://github.com/omniti-labs/jsend
 from flask import jsonify, make_response
 
-from app.define.status import SUCESS_OK, ERROR_BAD_REQUEST
+from app.define.status import SUCCESS_OK, ERROR_BAD_REQUEST
 
-def success(data, status=SUCESS_OK):
+def success(data, status=SUCCESS_OK):
     return make_response(
         jsonify({
             "status": "success",

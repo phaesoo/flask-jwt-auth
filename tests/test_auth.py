@@ -33,7 +33,7 @@ def test_me(client, user):
         "Authorization": access_token,
     })
 
-    assert resp.status_code == status.SUCESS_OK
+    assert resp.status_code == status.SUCCESS_OK
 
     resp = client.get('/api/auth/me')
 
