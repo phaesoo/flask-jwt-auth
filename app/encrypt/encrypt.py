@@ -24,7 +24,7 @@ def encrypt_jwt(username):
         "username": username, 
         "iat": iat,
         "exp": exp
-    }, get_config("JWT_SECRET_KEY"), algorithm=get_config("JWT_ALGO"))
+    }, get_config("JWT_SECRET_KEY"), algorithm=get_config("JWT_ALGO")).decode("utf-8")
 
 
 def decrypt_jwt(token):

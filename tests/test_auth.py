@@ -1,5 +1,6 @@
 import json
 from app.define import status
+from app.configs import test as test_config
 
 
 def test_login(client, user):
@@ -7,12 +8,13 @@ def test_login(client, user):
     # 2. check access_token
     
     resp = client.post('/api/auth/login', json={
-        "username": "administrator",
-        "password": "test"
+        "username": test_config.ADMIN_USER,
+        "password": test_config.ADMIN_PSWD
     })
 
     assert resp.status_code == 200
-    access_token = json.loads(resp.data)["data"]["access_token"]
+
+    access_token = json.loads(resp.data.decode("utf-8"))["data"]["access_token"]
     assert len(access_token)
 
 
@@ -22,11 +24,11 @@ def test_me(client, user):
     # 3. test me without token (error unauthorized)
 
     resp = client.post('/api/auth/login', json={
-        "username": "administrator",
-        "password": "test"
+        "username": test_config.ADMIN_USER,
+        "password": test_config.ADMIN_PSWD
     })
 
-    access_token = json.loads(resp.data)["data"]["access_token"]
+    access_token = json.loads(resp.data.decode("utf-8"))["data"]["access_token"]
     assert len(access_token)
 
     resp = client.get('/api/auth/me', headers={
@@ -47,18 +49,18 @@ def test_refresh(client, user):
     # 3. test refresh without token (error unauthorized)
 
     resp = client.post('/api/auth/login', json={
-        "username": "administrator",
-        "password": "test"
+        "username": test_config.ADMIN_USER,
+        "password": test_config.ADMIN_PSWD
     })
 
-    prev_access_token = json.loads(resp.data)["data"]["access_token"]
+    prev_access_token = json.loads(resp.data.decode("utf-8"))["data"]["access_token"]
     assert len(prev_access_token)
 
     resp = client.get('/api/auth/refresh', headers={
         "Authorization": prev_access_token,
     })
 
-    new_access_token = json.loads(resp.data)["data"]["access_token"]
+    new_access_token = json.loads(resp.data.decode("utf-8"))["data"]["access_token"]
     assert len(new_access_token)
 
     assert prev_access_token != new_access_token

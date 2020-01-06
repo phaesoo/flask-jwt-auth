@@ -4,6 +4,7 @@ from flask import jsonify, make_response
 
 from app.define.status import SUCCESS_OK, ERROR_BAD_REQUEST
 
+
 def success(data, status=SUCCESS_OK):
     return make_response(
         jsonify({
@@ -13,6 +14,7 @@ def success(data, status=SUCCESS_OK):
 
 
 def error(msg, status=ERROR_BAD_REQUEST):
+    print (msg)
     return make_response(
         jsonify({
             "status": "error",

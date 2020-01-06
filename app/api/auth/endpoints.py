@@ -34,6 +34,7 @@ class Login(Resource):
         auth_user = session.query(AuthUser).filter_by(username=parsed.username).first()
         if auth_user is None:
             return resp.error("Invalid username in token: {}".format(parsed.username))
+        print (auth_user.password, encrypt_sha(parsed.password), parsed.password)
         if auth_user.password != encrypt_sha(parsed.password):
             return resp.error("Invalid password")
 
@@ -65,8 +66,8 @@ class Me(Resource):
             "last_name": auth_user.last_name,
             "email": auth_user.email,
             "date_joined": auth_user.date_joined,
-            "iat": kwargs["iat"],
-            "exp": kwargs["exp"],
+            "iat": kwargs["jwt_iat"],
+            "exp": kwargs["jwt_exp"],
         })
         
 
@@ -75,5 +76,5 @@ class Refresh(Resource):
     @jwt_authenticate()
     def get(self, **kwargs):
         return resp.success({
-            "access_token": encrypt_jwt(kwargs["username"])
+            "access_token": encrypt_jwt(kwargs["jwt_username"])
         }) 

@@ -38,9 +38,9 @@ def jwt_authenticate(is_superuser=False):
             if is_superuser and not auth_user.is_superuser:
                 return resp.error("Admin only", status=status.ERROR_FORBIDDEN)
 
-            kwargs["username"] = username
-            kwargs["exp"] = exp
-            kwargs["iat"] = decoded_token["iat"]
+            kwargs["jwt_username"] = username
+            kwargs["jwt_exp"] = exp
+            kwargs["jwt_iat"] = decoded_token["iat"]
             kwargs["auth_user"] = auth_user
 
             return f(*args, **kwargs)

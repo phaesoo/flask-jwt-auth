@@ -3,6 +3,7 @@ from sqlalchemy.orm import load_only
 import logging
 from datetime import datetime
 
+from app.define import status
 from app.api.restplus import api
 from app.decorators.auth import jwt_authenticate
 from app.models.auth import AuthUser
@@ -105,15 +106,27 @@ class Username(Resource):
     @jwt_authenticate()
     def get(self, username, **kwargs):
         session = get_session("auth")
-        auth_user = session.query(AuthUser).filter_by(username=username)[0]
 
-        return resp.success({
-            "id": auth_user.id,
-            "username": auth_user.username,
-            "first_name": auth_user.first_name,
-            "last_name": auth_user.last_name,
-            "email": auth_user.email,
-        })
+        query = session.query(AuthUser).filter_by(username=username)
+        user_count = query.count()
+        if user_count == 0:
+            return resp.error(
+                "No entry for username: {}".format(username),
+                status=status.ERROR_UNAUTHORIZED
+            )
+        elif user_count == 1:
+            auth_user = query[0]
+            return resp.success({
+                "id": auth_user.id,
+                "username": auth_user.username,
+                "first_name": auth_user.first_name,
+                "last_name": auth_user.last_name,
+                "email": auth_user.email,
+            })
+        else:
+            return resp.error({
+                "Duplicated username exists"
+            })
 
     @jwt_authenticate()
     def put(self, username, **kwargs):
@@ -121,11 +134,11 @@ class Username(Resource):
             parsed = parser_update.parse_args()
         except:
             return resp.error("Invalid request arguments")
-
+        
         session = get_session("auth")
         auth_user = session.query(AuthUser).filter_by(username=username).first()
         if auth_user.password != encrypt_sha(parsed.password):
-            return resp.error("Invalid password")
+            return resp.error("Invalid password %s %s" % (auth_user.password, parsed.password))
 
         update_dict = dict()
         new_password = parsed.get("new_password")
@@ -133,7 +146,7 @@ class Username(Resource):
             is_valid, err_msg = check_password(new_password)
             if not is_valid:
                 return resp.error(err_msg)
-            
+        
         for key in ["new_password", "first_name", "last_name", "email"]:
             val = parsed.get(key)
             if val is not None:
@@ -143,7 +156,7 @@ class Username(Resource):
                     update_dict[key] = val
 
         try:
-            session.query(AuthUser).update(update_dict)
+            session.query(AuthUser).filter_by(username=username).update(update_dict)
         except:
             session.rollback()
             return resp.error("Error while update user info.")
