@@ -2,7 +2,7 @@ aniso8601==8.0.0
 attrs==19.3.0
 cffi==1.13.2
 Click==7.0
-cryptography==2.8
+cryptography==3.2
 Flask==1.1.1
 -e git+git@github.com:phaesoo/flask-jwt-auth.git@a9fc19f9e58c86c312cc90517b1c649702c93ce7#egg=flask_jwt_auth_example
 flask-restplus==0.13.0
